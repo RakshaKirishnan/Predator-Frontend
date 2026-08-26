@@ -1,0 +1,154 @@
+/* PREDATOR Design Tokens & Global Styles */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #1e293b;
+  
+  --brand: #009669;
+  --brand-light: #34ebac;
+  --brand-panel: #ffffff;
+  
+  --scan: #34ebac;
+  --scan-soft: #87fcd3;
+  
+  --console: #0e1217;
+  --console-foreground: #f3f4f6;
+  
+  --gradient-brand: linear-gradient(90deg, #34ebac, #009669);
+  --console-veil: linear-gradient(160deg, rgba(14, 18, 23, 0.92), rgba(22, 28, 40, 0.94));
+  
+  --shadow-console: 0 30px 80px -30px rgba(0, 0, 0, 0.85);
+  --shadow-glow: 0 0 24px -6px #34ebac;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0e1217;
+  color: #f3f4f6;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Font Families */
+.font-display {
+  font-family: var(--font-archivo-black), 'Arial Black', sans-serif !important;
+}
+
+.font-sans {
+  font-family: var(--font-inter), system-ui, sans-serif !important;
+}
+
+.font-mono {
+  font-family: var(--font-jetbrains-mono), monospace !important;
+}
+
+/* Brand Theme Gradients & Background Utilities */
+.text-brand-gradient {
+  background-image: linear-gradient(90deg, #34ebac, #009669) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+}
+
+.bg-console-veil {
+  background-image: linear-gradient(160deg, rgba(14, 18, 23, 0.92), rgba(22, 28, 40, 0.94)) !important;
+}
+
+.text-scan {
+  color: #34ebac !important;
+}
+
+.text-scan-soft {
+  color: #87fcd3 !important;
+}
+
+.text-brand {
+  color: #009669 !important;
+}
+
+.bg-brand-panel {
+  background-color: #ffffff !important;
+}
+
+.bg-console {
+  background-color: #0e1217 !important;
+}
+
+.text-console-foreground {
+  color: #f3f4f6 !important;
+}
+
+.shadow-console {
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.85) !important;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 24px -6px #34ebac !important;
+}
+
+/* Mesh Overlay Glowing Effects */
+.mesh-glow {
+  filter: drop-shadow(0 0 3px #34ebac);
+}
+
+@keyframes mesh-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 2px #34ebac);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #34ebac);
+  }
+}
+
+.mesh-pulse {
+  animation: mesh-pulse 2.4s ease-in-out infinite;
+}
+
+/* Glassmorphism Cards for forms */
+.glass-card {
+  background: rgba(14, 18, 23, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(52, 235, 172, 0.2);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.neon-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(8, 11, 16, 0.9);
+  color: #ffffff;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.neon-input:focus {
+  border-color: #34ebac;
+  box-shadow: 0 0 15px rgba(52, 235, 172, 0.25);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
