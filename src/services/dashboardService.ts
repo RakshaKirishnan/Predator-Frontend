@@ -2,7 +2,7 @@
  * Dashboard API Service Layer
  */
 
-import { safeFetch } from "../lib/apiConfig";
+import { safeFetch, clearAuthToken } from "../lib/apiConfig";
 import {
   ApiResponse,
   DashboardCardsData,
@@ -140,9 +140,14 @@ export const dashboardService = {
    * Execute logout (/auth/logout)
    */
   async logout(): Promise<void> {
-    await safeFetch("/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    try {
+      await safeFetch("/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } finally {
+      clearAuthToken();
+    }
   },
 };
+

@@ -27,10 +27,7 @@ import { dashboardService } from "../../services/dashboardService";
 import { membersService } from "../../services/membersService";
 import { DashboardCardsData, UsageLog } from "../../types/dashboard.types";
 import { MemberItem } from "../../types/members.types";
-import { MembersView } from "../../components/members/MembersView";
-import { InviteUserModal } from "../../components/members/InviteUserModal";
-import { EmailTemplateEditor } from "../../components/settings/EmailTemplateEditor";
-import { HelpSupportView } from "../../components/help/HelpSupportView";
+import { AppShell } from "../../components/layout/AppShell";
 
 export default function Dashboard() {
 
@@ -147,8 +144,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", width: "100%", background: "#f9fafb", color: "#111827" }}>
-      
+    <AppShell activeTab="Dashboard" userProfile={userProfile}>
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div
@@ -178,280 +174,27 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Collapsible Sidebar */}
-      <Sidebar selected={selectedTab} setSelected={setSelectedTab} stats={stats} onLogout={handleLogout} userProfile={userProfile} />
-      
-      {/* Main Content Area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        {selectedTab === "Members" ? (
-          <MembersView 
-            members={members} 
-            currentUserRole={userProfile?.role}
-            onOpenInvite={() => setShowInviteModal(true)} 
-            onRefresh={() => { void fetchMembers(); void fetchUser(); }}
-          />
-        ) : selectedTab === "Settings" ? (
-          <EmailTemplateEditor />
-        ) : selectedTab === "Help & Support" ? (
-          <HelpSupportView />
-        ) : (
-          <DashboardContentView 
-            stats={stats} 
-            logs={logs} 
-            logPage={logPage} 
-            setLogPage={setLogPage} 
-            totalLogs={totalLogs} 
-            logLimit={logLimit}
-            healthStatus={healthStatus}
-            userProfile={userProfile}
-            onRefresh={() => { void fetchUser(); void fetchStats(); void fetchLogs(); void fetchHealth(); }}
-            selectedLog={selectedLog}
-            setSelectedLog={setSelectedLog}
-          />
-        )}
-
-
-      </div>
-
-      {/* Modular Invite User Modal Dialog */}
-      <InviteUserModal
-        isOpen={showInviteModal}
-        onClose={() => setShowInviteModal(false)}
-        onSuccess={handleInviteSuccess}
-        currentUserRole={userProfile?.role || "USER"}
+      <DashboardContentView
+        stats={stats}
+        logs={logs}
+        logPage={logPage}
+        setLogPage={setLogPage}
+        totalLogs={totalLogs}
+        logLimit={logLimit}
+        healthStatus={healthStatus}
+        userProfile={userProfile}
+        onRefresh={() => {
+          void fetchUser();
+          void fetchStats();
+          void fetchLogs();
+          void fetchHealth();
+        }}
+        selectedLog={selectedLog}
+        setSelectedLog={setSelectedLog}
       />
-
-    </div>
+    </AppShell>
   );
 }
-
-// Sidebar Component
-const Sidebar = ({ selected, setSelected, stats, onLogout, userProfile }: { selected: string; setSelected: (t: string) => void; stats: DashboardCardsData; onLogout: () => void; userProfile?: { name: string; email: string; role: string } | null }) => {
-  const [open, setOpen] = useState(true);
-
-  return (
-    <nav
-      style={{
-        position: "sticky",
-        top: 0,
-        height: "100vh",
-        flexShrink: 0,
-        borderRight: "1px solid #e5e7eb",
-        backgroundColor: "#ffffff",
-        padding: "0.5rem",
-        boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        boxSizing: "border-box",
-        width: open ? "16rem" : "4rem",
-        transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        zIndex: 50,
-      }}
-    >
-      <div>
-        <TitleSection open={open} userProfile={userProfile} />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginBottom: "2rem" }}>
-          <Option
-            Icon={Home}
-            title="Dashboard"
-            selected={selected}
-            setSelected={setSelected}
-            open={open}
-          />
-          <Option
-            Icon={Users}
-            title="Members"
-            selected={selected}
-            setSelected={setSelected}
-            open={open}
-          />
-
-        </div>
-
-        {open && (
-          <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "1rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-            <div style={{ padding: "0.5rem 0.75rem", fontSize: "0.75rem", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Account Settings
-            </div>
-            <Option
-              Icon={Settings}
-              title="Settings"
-              selected={selected}
-              setSelected={setSelected}
-              open={open}
-            />
-            <Option
-              Icon={HelpCircle}
-              title="Help & Support"
-              selected={selected}
-              setSelected={setSelected}
-              open={open}
-            />
-          </div>
-        )}
-      </div>
-
-      <div>
-        {open && userProfile && (
-          <div style={{ margin: "0.5rem", padding: "0.75rem", borderRadius: "8px", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: "#009669", color: "#ffffff", display: "grid", placeItems: "center", fontWeight: 700, fontSize: "0.85rem" }}>
-              {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
-            </div>
-            <div style={{ overflow: "hidden" }}>
-              <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{userProfile.name}</div>
-              <div style={{ fontSize: "0.7rem", color: "#6b7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{userProfile.role}</div>
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={onLogout}
-          style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            padding: "0.5rem 0.75rem",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "transparent",
-            color: "#ef4444",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            cursor: "pointer",
-            marginBottom: "0.5rem",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#fef2f2")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-        >
-          <LogOut style={{ width: "18px", height: "18px" }} />
-          {open && <span>Logout</span>}
-        </button>
-
-        <ToggleClose open={open} setOpen={setOpen} />
-      </div>
-    </nav>
-  );
-};
-
-const Option = ({
-  Icon,
-  title,
-  selected,
-  setSelected,
-  open,
-  notifs,
-}: {
-  Icon: React.ElementType;
-  title: string;
-  selected: string;
-  setSelected: (t: string) => void;
-  open: boolean;
-  notifs?: number;
-}) => {
-  const isSelected = selected === title;
-
-  return (
-    <button
-      onClick={() => setSelected(title)}
-      style={{
-        position: "relative",
-        display: "flex",
-        height: "2.5rem",
-        width: "100%",
-        alignItems: "center",
-        borderRadius: "8px",
-        border: "none",
-        backgroundColor: isSelected ? "#ecfdf5" : "transparent",
-        color: isSelected ? "#009669" : "#4b5563",
-        fontSize: "0.875rem",
-        fontWeight: isSelected ? 700 : 500,
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        padding: "0 0.75rem",
-      }}
-      onMouseEnter={(e) => {
-        if (!isSelected) e.currentTarget.style.backgroundColor = "#f3f4f6";
-      }}
-      onMouseLeave={(e) => {
-        if (!isSelected) e.currentTarget.style.backgroundColor = "transparent";
-      }}
-    >
-      <div style={{ display: "grid", placeItems: "center", width: "1.5rem" }}>
-        <Icon style={{ width: "18px", height: "18px" }} />
-      </div>
-
-      {open && (
-        <span style={{ marginLeft: "0.75rem", transition: "opacity 0.2s ease", flex: 1, textAlign: "left" }}>
-          {title}
-        </span>
-      )}
-
-      {open && notifs !== undefined && notifs > 0 && (
-        <span
-          style={{
-            fontSize: "0.7rem",
-            fontWeight: 700,
-            padding: "0.15rem 0.4rem",
-            borderRadius: "9999px",
-            backgroundColor: isSelected ? "#009669" : "#e5e7eb",
-            color: isSelected ? "#ffffff" : "#374151",
-          }}
-        >
-          {notifs}
-        </span>
-      )}
-    </button>
-  );
-};
-
-const TitleSection = ({ open, userProfile }: { open: boolean; userProfile?: { name: string; email: string; role: string } | null }) => {
-  return (
-    <div style={{ marginBottom: "1.5rem", borderBottom: "1px solid #e5e7eb", paddingBottom: "1rem" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.5rem" }}>
-        <div style={{ width: "32px", height: "32px", borderRadius: "8px", backgroundColor: "#009669", display: "grid", placeItems: "center", color: "#ffffff", fontWeight: 800 }}>
-          P
-        </div>
-        {open && (
-          <div>
-            <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#111827", letterSpacing: "0.05em", fontFamily: "var(--font-archivo-black)" }}>
-              PREDATOR
-            </div>
-            <div style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: 500 }}>
-              Face Security Console
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ToggleClose = ({ open, setOpen }: { open: boolean; setOpen: (b: boolean) => void }) => {
-  return (
-    <button
-      onClick={() => setOpen(!open)}
-      style={{
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0.5rem",
-        borderRadius: "8px",
-        border: "none",
-        backgroundColor: "transparent",
-        color: "#9ca3af",
-        cursor: "pointer",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
-      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-    >
-      <ChevronsRight style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.3s", width: "18px", height: "18px" }} />
-    </button>
-  );
-};
 
 // Dashboard Main Content View
 const DashboardContentView = ({

@@ -1,0 +1,32 @@
+# Node / build artefacts
+node_modules/
+.next/
+out/
+dist/
+
+# Environment files – secrets must be injected at runtime, not baked in
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+
+# Editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# TypeScript incremental build info (large, not needed in image)
+*.tsbuildinfo
+
+# Docs / misc
+*.md
+README*

@@ -8,6 +8,7 @@ import { BrandPanel } from "../components/auth/BrandPanel";
 import { Mail, CheckCircle2, AlertCircle, Copy, ArrowRight, ExternalLink } from "lucide-react";
 
 import { getApiBaseUrl } from "../lib/apiConfig";
+import { dashboardService } from "../services/dashboardService";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,6 +27,24 @@ export default function LoginPage() {
 
   // Client instantiation
   const client = useRef(new FaceAuthClient({ baseUrl }));
+
+  // Auto-redirect if already authenticated
+  useEffect(() => {
+    let isMounted = true;
+    dashboardService
+      .getCurrentUser()
+      .then((user) => {
+        if (isMounted && user) {
+          router.replace("/dashboard");
+        }
+      })
+      .catch(() => {
+        // Not authenticated, stay on login page
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
 
   // Check health and count users to see if DB is empty
   useEffect(() => {

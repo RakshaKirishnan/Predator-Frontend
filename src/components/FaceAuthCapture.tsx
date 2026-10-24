@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Sparkles, AlertCircle, X } from "lucide-react";
 import { FaceAuthClient } from "../api/face-auth-client";
 import { captureVideoFrame } from "../lib/capture-frame";
+import { setAuthSession } from "../lib/apiConfig";
 import { useCamera } from "../hooks/useCamera";
 import { ScanViewfinder } from "./auth/ScanViewfinder";
 
@@ -108,8 +109,8 @@ export function FaceAuthCapture({
         result = await client.faceLogin(imageBase64);
       }
       setSuccess(true);
-      if (result.data && (result.data as any).access_token && typeof window !== "undefined") {
-        localStorage.setItem("predator_access_token", String((result.data as any).access_token));
+      if (result.data && (result.data as any).access_token) {
+        setAuthSession(String((result.data as any).access_token));
       }
       setStatus(result.message || "Success");
       onSuccess?.((result.data || {}) as Record<string, unknown>);
@@ -180,8 +181,8 @@ export function FaceAuthCapture({
         if (result.success) {
           failedAttemptsRef.current = 0;
           setSuccess(true);
-          if (result.data && (result.data as any).access_token && typeof window !== "undefined") {
-            localStorage.setItem("predator_access_token", String((result.data as any).access_token));
+          if (result.data && (result.data as any).access_token) {
+            setAuthSession(String((result.data as any).access_token));
           }
           setStatus(result.message || (mode === "face-login" ? "Biometrics Verified — Logging in..." : "Face Enrolled Successfully"));
           onSuccess?.((result.data || {}) as Record<string, unknown>);
